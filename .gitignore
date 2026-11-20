@@ -1,0 +1,14 @@
+node_modules/
+data/
+__pycache__/
+*.sqlite3*
+*.log
+index.*备份.html
+tests/reports/
+tests/stress-*.json
+tests/盐都1986三条体验记录.jsonl
+tests/integrate_gameplay.py
+.env*
+deploy-private/
+
+*.旧稿备份.md
