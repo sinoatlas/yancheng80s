@@ -5,23 +5,38 @@ const source=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const js=[...source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('class GameController'));
 function make(seed,year=1986,region='yd',family=0,gender='male'){
  const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{children:[],classList:{add(){},remove(){}},appendChild(x){this.children.push(x)},prepend(){},set innerHTML(x){this._html=x;this.children=[]},get innerHTML(){return this._html||''}});return elements.get(id)}
- const ctx={LifeModel:M,console,window:{addEventListener(){}},document:{getElementById:el,createElement:()=>({})},localStorage:{getItem(){return null},setItem(){}}};vm.createContext(ctx);vm.runInContext(js+'\nglobalThis.api={GameController,REGIONS,REGION_FAMILIES,COHORT_TEMPLATES};',ctx);
- const {GameController,REGIONS,REGION_FAMILIES,COHORT_TEMPLATES}=ctx.api,g=Object.create(GameController.prototype);g.reset();g.state.birthYear=year;g.state.gender=gender;g.state.personName=gender==='female'?'陈晓梅':'徐浩';g.state.region=REGIONS.find(r=>r.id===region);g.state.family=REGION_FAMILIES[region][family%REGION_FAMILIES[region].length];Object.entries(g.state.family.stat||{}).forEach(([k,v])=>g.state.stats[k]+=v);g.state.cohorts=JSON.parse(JSON.stringify(COHORT_TEMPLATES));M.init(g.state,seed);g.buildYearByYearChronicle();return {g,el};
+ const ctx={AdultLife:require('../adult-life.js'),LifeModel:M,console,window:{addEventListener(){}},document:{getElementById:el,createElement:()=>({})},localStorage:{getItem(){return null},setItem(){}}};vm.createContext(ctx);vm.runInContext(js+'\nglobalThis.api={GameController,REGIONS,REGION_FAMILIES,COHORT_TEMPLATES,TRAITS};',ctx);
+ const {GameController,REGIONS,REGION_FAMILIES,COHORT_TEMPLATES,TRAITS}=ctx.api,g=Object.create(GameController.prototype);g.reset();g.state.birthYear=year;g.state.gender=gender;g.state.personName=gender==='female'?'陈晓梅':'徐浩';g.state.region=REGIONS.find(r=>r.id===region);g.state.trait=TRAITS[(seed+year+family)%TRAITS.length];Object.entries(g.state.region.stat||{}).forEach(([k,v])=>g.state.stats[k]+=v);g.state.family=REGION_FAMILIES[region][family%REGION_FAMILIES[region].length];Object.entries(g.state.family.stat||{}).forEach(([k,v])=>g.state.stats[k]+=v);g.state.cohorts=JSON.parse(JSON.stringify(COHORT_TEMPLATES));M.init(g.state,seed);g.buildYearByYearChronicle();return {g,el};
 }
 function run(index,all=false,cohorts=false){
  let seed=20261120+Math.floor(index/10),policy=index%10,rng=seed;const rand=()=>{rng=(Math.imul(rng,1664525)+1013904223)>>>0;return rng/2**32};
  const regions=['th','yd','dt','df','jh','fn','sy','bh','xs'];const {g,el}=make(seed,cohorts?1980+Math.floor(index/10):all?1980+index%10:1986,all?regions[(index*7+Math.floor(index/10))%9]:'yd',all?Math.floor(index/9):0,all&&index%2?'female':'male');
  const trace=[],violations=[];let count=0;
- try{while(g.state.currentStep<g.state.eventsChain.length){assert(count++<160,'循环没有结束');const e=g.state.eventsChain[g.state.currentStep];g.renderCurrentEvent();const options=el('card-actions').children.filter(b=>b.onclick&&!b.disabled);assert(options.length,'无有效选项');let chosen=options[Math.floor(rand()*options.length)];
+ try{while(g.state.currentStep<g.state.eventsChain.length){assert(count++<240,'循环没有结束');g.renderCurrentEvent();const e=g.activeEvent;const options=el('card-actions').children.filter(b=>b.onclick&&!b.disabled);assert(options.length,'无有效选项');let chosen=options[Math.floor(rand()*options.length)];
   const find=t=>options.find(b=>b.innerHTML.includes(t));
   if(e.isAnnualPlan)chosen=find(['平衡生活','进修学习','投入工作','陪伴家人','锻炼休息'][policy%5])||chosen;
   if(e.age<15 && policy<5)chosen=options[0];
   if(e.isMiddleSchoolFork)chosen=find(policy<4?'省重点高中':policy<7?'机电技校':'跟着亲友下海')||chosen;
-  if(e.isEighteenFork)chosen=find(policy===3?'高复班':'南京普通一本')||chosen;
+  if(e.isEighteenFork)chosen=find(policy===0?'985类':policy===1?'211类':policy===3?'高复班':'南京普通一本')||chosen;
   if(e.isRetakeExamFork)chosen=find('考入本科')||chosen;
   if(e.isCareerAffinityFork)chosen=find(policy<3?'企业岗位':policy===3?'公共服务':policy<7?'继续当前工作':'自主经营')||chosen;
   if(e.isHouseFork)chosen=find(policy%3===0?'按揭':policy%3===1?'家乡小楼':'租住')||chosen;
   if(e.isCareerCrisisFork)chosen=find(policy%2?'企业岗位':'继续当前工作')||chosen;
+  if(e.isAdultLife){
+    const a=g.state.adult,year=e.year,wantsFamily=[0,2,3,6,7].includes(policy);
+    let desired=null;
+    if(wantsFamily&&e.age>=23&&e.age<28&&a.relationship==='single')desired='relationship';
+    else if(wantsFamily&&a.relationship==='dating'&&year-a.partner.since>=1&&e.age<31)desired='relationship';
+    else if(wantsFamily&&a.relationship==='married'&&!a.children.length&&e.age>=25&&e.age<32)desired='children';
+    const nav=find('另一件事');
+    if(e.topic==='hub'){chosen=options.find(b=>b.adultTopic===(desired||(['health','work','work','parents','health','work','relationship','housing','single','work'][policy])))||options[0];}
+    else if(desired&&e.topic!==desired&&nav)chosen=nav;
+    else if(e.topic==='relationship')chosen=find(a.relationship==='single'?(wantsFamily?'朋友介绍':'独身'):a.relationship==='dating'&&wantsFamily?'简单成家':policy===2||policy===6?'先把工作':'固定相处')||chosen;
+    else if(e.topic==='children')chosen=find(a.children.length?(policy===2||policy===6?'活动':'陪'):'开始养育')||options[0];
+    else if(e.topic==='health')chosen=find(policy===2?'硬撑':policy===4||policy===9?'规律运动':'恢复期')||options[0];
+    else if(e.topic==='work')chosen=find(policy===2||policy===6?'额外任务':policy===3?'工作边界':'技能')||options[0];
+    else if(e.topic==='single')chosen=find('爱好')||options[0];
+  }
   const choice=chosen.innerHTML.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();chosen.onclick();
   for(const [k,v] of Object.entries(g.state.stats))assert(Number.isFinite(v),k+' 非数值');
   if(g.state.education==='university')assert.equal(g.state.career,'student','在校全职工作');
@@ -33,9 +48,11 @@ function run(index,all=false,cohorts=false){
  const graduation=trace.find(t=>t.education==='graduated');if(graduation)assert(l.ledger.find(r=>r.year===graduation.year).income>0,'毕业工作当年未计收入');
  assert.equal(l.ledger.filter(r=>r.age>=18).length,Object.values(l.focusYears).reduce((a,b)=>a+b,0));
  assert.equal(s.firstLifeSnapshot.wealth,M.netWorth(s));
+ assert(s.firstLifeSnapshot.timeline.length<=160,'公开长卷条目超限');assert(Buffer.byteLength(JSON.stringify({record:Object.fromEntries(['name','region','birthYear','title','wealth','epitaph','timeline'].map(k=>[k,s.firstLifeSnapshot[k]])),ownerToken:'a'.repeat(64)}))<65536,'公开长卷体积超限');
+ const a=s.adult;assert(a.children.every(c=>c.birthYear>=s.birthYear+24&&c.birthYear<=2026));assert(!a.car||a.car.balance>=0);if(a.relationship!=='married')assert.equal(l.ledger.at(-1).partnerIncome,0);assert(!el('ending-life-ledger').innerHTML.includes('<table>'));
  if(l.home)assert(l.home.balance>=0);assert.equal(el('end-cohort-matrix').children.length,4);
  }catch(e){violations.push(e.message)}
- const s=g.state;return {run:index+1,seed,policy,birthYear:s.birthYear,gender:s.gender,region:s.region.name,family:s.family.name,violations,summary:{career:s.career,education:s.education,wealth:M.netWorth(s),cash:s.stats.wealth,skill:s.life.skill,bonds:s.life.bonds,health:s.stats.health,turningPoints:trace.filter(t=>t.kind).map(t=>t.kind),promotions:s.life.promotions,plans:s.life.plans},trace,ledger:s.life.ledger};
+ const s=g.state;return {run:index+1,seed,policy,birthYear:s.birthYear,gender:s.gender,region:s.region.name,family:s.family.name,violations,summary:{career:s.career,education:s.education,university:s.universityTier||null,trait:s.trait?.name,wealth:M.netWorth(s),cash:s.stats.wealth,skill:s.life.skill,bonds:s.life.bonds,health:s.stats.health,turningPoints:trace.filter(t=>t.kind).map(t=>t.kind),promotions:s.life.promotions,plans:s.life.plans,adult:s.adult},trace,ledger:s.life.ledger};
 }
 if(require.main===module){
 const cohorts=process.argv.includes('--cohorts'),all=process.argv.includes('--all')||cohorts,n=cohorts?100:all?200:100,reports=Array.from({length:n},(_,i)=>run(i,all,cohorts)),bad=reports.filter(r=>r.violations.length);

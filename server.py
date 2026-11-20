@@ -16,6 +16,7 @@ from urllib.parse import urlsplit, parse_qs
 
 ROOT = Path(__file__).resolve().parent
 STATIC = {'/': ('index.html','text/html'), '/index.html': ('index.html','text/html'),
+          '/adult-life.js': ('adult-life.js','text/javascript'),
           '/life-model.js': ('life-model.js','text/javascript'), '/public-client.js': ('public-client.js','text/javascript'),
           '/gallery.html': ('gallery.html','text/html'), '/styles.css': ('styles.css','text/css')}
 
@@ -79,7 +80,7 @@ def create_server(db,host='127.0.0.1',port=8766):
                     rows=c.execute('SELECT id,created,body FROM lives ORDER BY created DESC,id DESC LIMIT 21 OFFSET ?',(offset,)).fetchall()
                 items=[]
                 for rid,created,body in rows[:20]:
-                    r=json.loads(body);items.append({k:r[k] for k in ('name','region','birthYear','title','wealth')}|{'id':rid,'created':created})
+                    r=json.loads(body);items.append({**{k:r[k] for k in ('name','region','birthYear','title','wealth')},'id':rid,'created':created})
                 self.send(200,{'items':items,'hasMore':len(rows)>20});return
             if re.fullmatch(r'/api/lives/[0-9a-f]{32}',p):
                 with connect() as c:row=c.execute('SELECT created,body FROM lives WHERE id=?',(p.rsplit('/',1)[1],)).fetchone()

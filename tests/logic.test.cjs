@@ -7,7 +7,7 @@ const els = new Map();
 function el(id) { if (!els.has(id)) els.set(id, {children:[], classList:{add(){},remove(){}}, appendChild(c){this.children.push(c)}, prepend(){}, set innerHTML(v){this.children=[]; this._html=v}, get innerHTML(){return this._html||''}}); return els.get(id); }
 const document = {getElementById:el, createElement:()=>({classList:{add(){},remove(){}}})};
 const ctx = {window:{addEventListener(){}},document,console,localStorage:{getItem(){return null},setItem(){}}};
-ctx.LifeModel=require('../life-model.js');vm.createContext(ctx); vm.runInContext(script + '\nglobalThis.api={GameController,REGIONS,REGION_FAMILIES};',ctx);
+ctx.AdultLife=require('../adult-life.js');ctx.LifeModel=require('../life-model.js');vm.createContext(ctx); vm.runInContext(script + '\nglobalThis.api={GameController,REGIONS,REGION_FAMILIES};',ctx);
 const {GameController,REGIONS,REGION_FAMILIES}=ctx.api;
 function game(year){const g=Object.create(GameController.prototype);g.reset();g.state.birthYear=year;g.state.region=REGIONS[0];g.state.family=REGION_FAMILIES[REGIONS[0].id][0];g.state.cohorts=[];g.buildYearByYearChronicle();return g}
 let failures=0;function test(name,fn){try{fn();console.log('PASS',name)}catch(e){failures++;console.error('FAIL',name,e.message)}}
@@ -15,7 +15,7 @@ test('每个出生年份的年度关键事件不被覆盖，2026结卷',()=>{for
 test('少年游戏经历被记录并触发后续选项',()=>{let g=game(1984);g.renderCurrentEvent=()=>{};g.handleOption({playedGamesGamer:true,effect:{}},{year:1997,age:13});assert.equal(g.state.playedGamesGamer,true)});
 test('普通高中滑档不会被记录成重点高中',()=>{let g=game(1984);g.state.stats.study=50;g.state.currentStep=g.state.eventsChain.findIndex(e=>e.isMiddleSchoolFork);g.renderCurrentEvent();let b=el('card-actions').children.find(b=>b.innerHTML.includes('滑档'));assert(b);b.onclick();assert.equal(g.state.schoolTrack,'normal_hs')});
 
-test('各出生年份和不同选择均能走到结卷并显示同龄人',()=>{for(let y=1980;y<=1989;y++){for(let choice of [0,1,2]){let g=game(y);g.state.cohorts=[{name:'小陈',origin:'虚构',region:'射阳',status:'初生'}];let steps=0;while(g.state.currentStep<g.state.eventsChain.length){g.renderCurrentEvent();let buttons=el('card-actions').children.filter(b=>typeof b.onclick==='function');assert(buttons.length,`${y} ${g.state.currentStep} no choices`);buttons[Math.min(choice,buttons.length-1)].onclick();assert(++steps<160,'infinite loop')}assert(g.state.firstLifeSnapshot,`${y} missing ending`);assert(el('end-cohort-matrix').children.length>0,`${y} no cohort matrix`);}}});
+test('各出生年份和不同选择均能走到结卷并显示同龄人',()=>{for(let y=1980;y<=1989;y++){for(let choice of [0,1,2]){let g=game(y);g.state.cohorts=[{name:'小陈',origin:'虚构',region:'射阳',status:'初生'}];let steps=0;while(g.state.currentStep<g.state.eventsChain.length){g.renderCurrentEvent();let buttons=el('card-actions').children.filter(b=>typeof b.onclick==='function'&&(g.activeEvent.topic==='hub'||!b.adultTopic));assert(buttons.length,`${y} ${g.state.currentStep} no choices`);buttons[Math.min(choice,buttons.length-1)].onclick();assert(++steps<160,'infinite loop')}assert(g.state.firstLifeSnapshot,`${y} missing ending`);assert(el('end-cohort-matrix').children.length>0,`${y} no cohort matrix`);}}});
 
 
 test('初生同龄人不会以学龄儿童身份出现',()=>{let g=game(1984);g.state.cohorts=[{name:'小陈'},{name:'小王'},{name:'小李'},{name:'小张'}];g.updateCohortsForAge(0);assert(g.state.cohorts.every(c=>c.status.includes('襁褓')))});

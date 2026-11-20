@@ -1,15 +1,17 @@
 /* 盐阜潮涌：平衡用虚构模型，金额单位万元。没有采用真实人口或房产预测。 */
 (function(root){
   'use strict';
+  const Adult=typeof module!=='undefined'&&module.exports?require('./adult-life.js'):root.AdultLife;
   const names={student:'在校学习',apprentice:'学徒',industry:'工业技术',company:'企业职员',system:'公共服务',boss:'自主经营',biz:'商贸经营'};
   const focuses={balanced:'平衡生活',learn:'进修学习',work:'投入工作',family:'陪伴家人',health:'锻炼休息'};
   const clamp=n=>Math.max(0,Math.min(100,n));
   const round=n=>Math.round(n*10000)/10000;
   const model={names,focuses,
     init(s,seed){
+      Adult.init(s);
       if(s.life)return s.life;
       s.life={seed:(seed ?? Math.floor(Math.random()*4294967296))>>>0,focus:'balanced',skill:15,bonds:50,
-        experience:{industry:0,company:0,system:0,boss:0,biz:0,apprentice:0},careers:[],ledger:[],year:null,open:0,
+        studyHabits:0,experience:{industry:0,company:0,system:0,boss:0,biz:0,apprentice:0},careers:[],ledger:[],year:null,open:0,
         home:null,aidUsed:false,focusYears:{balanced:0,learn:0,work:0,family:0,health:0},promotions:[],highestLevels:{},investments:[],qualifications:[],activePlan:null,plans:[],turningYears:{}};
       return s.life;
     },
@@ -19,7 +21,10 @@
       if(year<=knots[0][0])return knots[0][1];
       for(let i=1;i<knots.length;i++){let [y,v]=knots[i], [py,pv]=knots[i-1];if(year<=y)return pv+(v-pv)*(year-py)/(y-py);}return 8.5;
     },
-    begin(s,year){const l=this.init(s);if(l.year===year)return;l.year=year;l.open=s.stats.wealth;l.focus='balanced';l.recovery=null;},
+    begin(s,year){const l=this.init(s);Adult.begin(s,year);if(l.year===year)return;l.year=year;l.open=s.stats.wealth;l.yearBaseline={health:s.stats.health,skill:l.skill,bonds:l.bonds};l.focus='balanced';l.recovery=null;},
+    admission(s){const l=this.init(s),study=s.stats.study,talent=s.trait?.id==='zuotijia'?10:0,habits=Math.min(4,l.studyHabits||0)*4,family=Math.min(4,Math.max(0,(s.family?.stat?.study||0)/5)),school=s.schoolTrack==='prov_key'?4:0,condition=s.stats.health<25||s.stats.mood<20?-6:s.stats.health>=45&&s.stats.mood>=35?3:0;
+      return {study,talent,habits,family,school,condition,score:Math.round(study*.72+talent+habits+family+school+condition),aid:(s.family?.houseHelp??2)<=2.5};},
+    universityOptions(s,year,repeat=false){const a=this.admission(s),base=repeat?'retake_university':'nanjing_key';return [['985',93,'985类研究型大学'],['211',83,'211类重点大学'],['regular',55,repeat?'复读后考入本科':'南京普通一本'],['local',45,'盐城本地本科']].map(([tier,threshold,name])=>({text:`【${name}】综合准备 ${a.score}/${threshold}${a.aid?' · 可申请游戏助学，学费减半':''}；四年本科，${tier==='985'?'更多研究训练':tier==='211'?'更多专业实践':tier==='local'?'离家较近':'积累专业本领'}`,universityTier:tier,universityThreshold:threshold,schoolType:tier==='local'&&!repeat?'yancheng_local':base,careerSet:'student',adultLocked:a.score<threshold?`还差${threshold-a.score}点综合准备`:'',effect:{study:5,mood:4},log:`你以综合准备${a.score}进入${name}，开始四年本科学习。${a.aid?'助学安排缓解了一部分学费压力。':''}`}));},
     degree(s){return ['graduated'].includes(s.education)||s.education==='university'&&s.graduationAge!==null&&s.graduationAge<=((s.life?.year||s.birthYear)-s.birthYear);},
     working(s){return s.career!=='student'&&s.education!=='university'&&s.education!=='repeat';},
     level(s,career=s.career){const l=this.init(s),xp=l.experience[career]||0;return xp>=15&&l.skill>=65?3:xp>=8&&l.skill>=45?2:xp>=3&&l.skill>=25?1:0;},
@@ -30,18 +35,18 @@
       s.career=next;
       if(next!=='student' && (!l.careers.length||l.careers.at(-1).career!==next))l.careers.push({year,career:next});
     },
-    housing(kind){return kind==='julonghu'?{price:42,down:13,loan:29,rate:0.045,years:20}:kind==='old_town'?{price:12,down:12,loan:0,rate:0,years:0}:{price:8,down:8,loan:0,rate:0,years:0};},
+    housing(kind,year=2010){const factor=this.base(year)/this.base(2010),price=round((kind==='julonghu'?42:kind==='old_town'?12:8)*factor),down=kind==='julonghu'?round(13*factor):price;return {price,down,loan:round(price-down),rate:kind==='julonghu'?.045:0,years:kind==='julonghu'?20:0};},
     aid(s){return s.life?.aidUsed?0:Math.max(0,s.family?.houseHelp??2);},
-    buy(s,kind,year){const l=this.init(s);if(l.home)return false;const q=this.housing(kind),aid=Math.min(this.aid(s),q.down);
+    buy(s,kind,year){const l=this.init(s);if(l.home)return false;const q=this.housing(kind,year),aid=Math.min(this.aid(s),q.down);
       if(s.stats.wealth+aid<q.down)return false;
       s.stats.wealth=round(s.stats.wealth+aid-q.down);l.aidUsed=true;
       l.home={kind,year,price:q.price,value:q.price,balance:q.loan,rate:q.rate,paidYears:0,years:q.years,
         payment:q.loan?q.loan*q.rate/(1-Math.pow(1+q.rate,-q.years)):0};
       s.houseBought=true;s.houseType=kind;return true;
     },
-    netWorth(s){const h=this.init(s).home;return round(s.stats.wealth+(h?h.value-h.balance:0));},
+    netWorth(s){const h=this.init(s).home,c=s.adult.car;return round(s.stats.wealth+(h?h.value-h.balance:0)+(c?c.value-c.balance:0));},
     planInfo(kind){return {retrain:{label:'两年在职进修',years:2,cost:0.5},relocate:{label:'三年异地工作',years:3,cost:1},side:{label:'两年副业尝试',years:2,cost:1.5},care:{label:'两年家庭陪伴',years:2,cost:0}}[kind];},
-    startPlan(s,kind,year){const l=this.init(s),q=this.planInfo(kind);if(!q||l.activePlan||!this.working(s)||(q.cost>0&&s.stats.wealth<q.cost)||(kind==='side'&&l.skill<35)||(['side','relocate'].includes(kind)&&s.career==='system')||kind==='relocate'&&!['industry','company','apprentice'].includes(s.career))return false;
+    startPlan(s,kind,year){const l=this.init(s),q=this.planInfo(kind);if(!q||l.activePlan||s.stats.health<20||s.stats.wealth<-5||s.adult.yearEffect.hospital||!this.working(s)||(q.cost>0&&s.stats.wealth<q.cost)||(kind==='side'&&l.skill<35)||(['side','relocate'].includes(kind)&&s.career==='system')||kind==='relocate'&&!['industry','company','apprentice'].includes(s.career))return false;
       s.stats.wealth=round(s.stats.wealth-q.cost);const p={id:year+'-'+kind,kind,label:q.label,start:year,end:year+q.years-1,status:'active',seen:false,career:s.career};l.activePlan=p;l.plans.push(p);return true;},
     cancelPlan(s,year){const l=this.init(s);if(l.activePlan){l.activePlan.status='interrupted';l.activePlan.finished=year;l.activePlan.seen=true;l.activePlan=null;}},
     chance(s){const l=this.init(s);return Math.min(.85,.4+l.skill/250+l.bonds/1000);},
@@ -50,32 +55,32 @@
       let income=0,living=0,tuition=0,rent=0,mortgage=0,interest=0,principal=0,training=0,planExpense=0,planChange=0,shock='';
       const work=this.working(s),focus=l.focus,base=this.base(year),previous=this.level(s);
       if(age>=18){
-        living=base*0.45;tuition=s.education==='university'?base*0.22:s.education==='repeat'?base*0.15:0;
+        living=base*0.45;tuition=s.education==='university'?base*0.22*(s.universityAid?.5:1):s.education==='repeat'?base*0.15:0;
         rent=!l.home?(s.career==='student'?base*0.08:base*0.16):base*0.035;
         training=focus==='learn'?base*0.06:0;
         if(work){
           if(!l.careers.length)l.careers.push({year,career:s.career});
           const multiplier={apprentice:0.55,industry:1,company:1.05,system:1,boss:1.15,biz:1.12}[s.career]||1;
-          const educationBonus=this.degree(s)?1.12:1;
+          const educationBonus=this.degree(s)?(s.universityTier==='985'?1.22:s.universityTier==='211'?1.18:1.12):1;
           income=base*multiplier*(1+previous*0.14)*educationBonus*(focus==='work'?1.18:focus==='family'?0.9:focus==='learn'?0.94:focus==='health'?0.92:1);
           if(s.career==='boss'||s.career==='biz'){
             const risk=this.random(s);let factor=risk<0.18?0.35:risk<0.4?0.8:risk>0.82?1.5:1;
-            if([2008,2020,2022].includes(year))factor*=0.75;
+            if(year===2008)factor*=0.75;
             income*=factor;shock=factor<0.8?'经营订单减少':factor>1.2?'经营订单增加':'经营平稳';
-          }else if((s.career==='company'||s.career==='industry')&&[2008,2020,2022].includes(year)){
+          }else if((s.career==='company'||s.career==='industry')&&year===2008){
             income*=0.88;shock='行业调整，收入承压';
           }
           if(l.recovery==='health')income*=0.75;
           if(l.recovery==='family')income*=0.9;
-          if(s.stats.health<30){income*=0.72;shock+=' · 身体不适，减少工作';}
           l.experience[s.career]=(l.experience[s.career]||0)+1;
           l.skill=clamp(l.skill+(focus==='learn'?7:focus==='work'?3:2));
-        }else if(s.education==='university'){l.skill=clamp(l.skill+(focus==='learn'?6:3));}
+        }else if(s.education==='university'){l.skill=clamp(l.skill+(focus==='learn'?6:3)+(s.universityTier==='985'?2:s.universityTier==='211'?1:0));}
         if(focus==='learn')s.stats.study=clamp(s.stats.study+4);
         s.stats.health=clamp(s.stats.health+(focus==='health'?6:focus==='work'?-5:-1));
         s.stats.mood=clamp(s.stats.mood+(focus==='family'?4:focus==='health'?3:focus==='work'?-3:0));
         l.bonds=clamp(l.bonds+(focus==='family'?6:focus==='work'?-3:-1));l.focusYears[focus]++;
         if(l.skill>=45&&!l.qualifications.length)l.qualifications.push({year,label:'专业技能进阶'});
+        if(s.stats.health<20||s.stats.wealth<-5||s.adult.yearEffect.hospital)this.cancelPlan(s,year);
         const p=l.activePlan;
         if(p&&year>=p.start&&year<=p.end){
           if(p.kind==='retrain'){income*=0.9;planExpense=base*0.1;l.skill=clamp(l.skill+5);}
@@ -88,6 +93,7 @@
         const current=this.level(s),recorded=l.highestLevels[s.career]||0;
         if(work&&current>recorded){l.promotions.push({year,career:s.career,level:current});l.highestLevels[s.career]=current;}
       }
+      const adult=Adult.annual(s,year,this,income);income=adult.income+adult.partnerIncome;
       const h=l.home;
       if(h){
         if(h.balance>0){interest=h.balance*h.rate;principal=Math.min(h.balance,h.payment-interest);mortgage=principal+interest;h.balance=Math.max(0,round(h.balance-principal));h.paidYears++;if(h.paidYears>=h.years)h.balance=0;}
@@ -96,18 +102,20 @@
       }
       if(l.recovery==='budget')living*=0.7;
       const debtInterest=Math.max(0,-s.stats.wealth)*0.04;
-      const expense=round(living+tuition+rent+mortgage+training+planExpense+debtInterest);
+      const expense=round(living+tuition+rent+mortgage+training+planExpense+debtInterest+adult.expense);
       income=round(income);s.stats.wealth=round(s.stats.wealth+income-expense);
       const r={year,age,focus,career:s.career,level:this.level(s),open:l.open,events,income,expense,close:s.stats.wealth,
         living:round(living),tuition:round(tuition),rent:round(rent),mortgage:round(mortgage),interest:round(interest),principal:round(principal),
         training:round(training),planExpense:round(planExpense),planChange:round(planChange),plan:l.plans.find(p=>year>=p.start&&year<=p.end&&(p.finished===undefined||year<=p.finished))?.label||'',debtInterest:round(debtInterest),netWorth:this.netWorth(s),shock,skill:l.skill,bonds:l.bonds};
+      for(const key of ['partnerIncome','childExpense','careExpense','carExpense','healthExpense','extraLiving'])r[key]=round(adult[key]||0);
+      r.health=s.stats.health;r.stress=s.adult.stress;r.hospitalized=adult.hospitalized||false;r.recoveryLeave=adult.recoveryLeave||false;r.notes=adult.notes;
       l.ledger.push(r);return r;
     },
-    summary(s){const l=this.init(s),edu=this.degree(s)?'完成本科学业':s.schoolTrack==='zhongzhuan'?'完成中专学习':s.schoolTrack==='tech'?'从技校起步':s.schoolTrack==='apprentice'?'跟随亲友学徒起步':'从高中学习起步';
+    summary(s){const l=this.init(s),edu=this.degree(s)?`${{985:'985类研究型大学',211:'211类重点大学',regular:'普通本科',local:'盐城本地本科'}[s.universityTier]||'本科'}毕业`:s.schoolTrack==='zhongzhuan'?'完成中专学习':s.schoolTrack==='tech'?'从技校起步':s.schoolTrack==='apprentice'?'跟随亲友学徒起步':'从高中学习起步';
       const history=l.careers.map(c=>`${c.year}年${names[c.career]||c.career}`).join(' → ')||'尚无就业记录';
       const h=l.home,housing=h?`住房估值${h.value.toFixed(1)}万，剩余房贷${h.balance.toFixed(1)}万`:'租住生活，未持有房产';
       const plans=l.plans.map(p=>`${p.start}年${p.label}（${{active:'仍在继续',completed:'已完成',interrupted:'中途调整'}[p.status]}）`).join('；')||'没有安排额外的长期计划';
-      return `教育：${edu}。职业：${history}。\n累计${Object.values(l.experience).reduce((a,b)=>a+b,0)}年工作/学徒经验，专业技能${l.skill}/100，${l.promotions.length}次成长进阶。\n成年后的打算：${plans}。\n陪伴：${l.focusYears.family}年把家人放在年度重心，关系状态${l.bonds}/100。${s.parentSacrifice?'曾共同承担亲人的治疗与照护。':''}\n健康${s.stats.health}/100，心情${s.stats.mood}/100。\n现金余额${s.stats.wealth.toFixed(1)}万${s.stats.wealth<0?'（负数为周转欠款）':''}；${housing}；模拟净资产${this.netWorth(s).toFixed(1)}万。人生不由一项分数定论。`;
+      return `教育：${edu}。职业：${history}。\n累计${Object.values(l.experience).reduce((a,b)=>a+b,0)}年工作/学徒经验，专业技能${l.skill}/100，${l.promotions.length}次成长进阶。\n成年后的打算：${plans}。\n陪伴：${l.focusYears.family}年把家人放在年度重心，关系状态${l.bonds}/100。${s.parentSacrifice?'曾共同承担亲人的治疗与照护。':''}\n健康${s.stats.health}/100，心情${s.stats.mood}/100。\n现金余额${s.stats.wealth.toFixed(1)}万${s.stats.wealth<0?'（负数为周转欠款）':''}；${housing}；模拟净资产${this.netWorth(s).toFixed(1)}万。人生不由一项分数定论。\n${Adult.summary(s)}`;
     }
   };
   if(typeof module!=='undefined'&&module.exports)module.exports=model;else root.LifeModel=model;

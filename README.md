@@ -5,12 +5,18 @@
 童年的街巷、游戏、同学和家乡味道，是这款游戏的情绪底色。成年后，玩家在家庭条件、技能、资金和健康的约束中，为自己的生活作决定。选择会留下工龄、账本、关系和后续事件，也可能在中途被新的处境打断。
 
 - 在线入口：[youyoustar.cn/yancheng80s](https://youyoustar.cn/yancheng80s/)
-- [设计理念](docs/DESIGN.md) · [实现说明](docs/ARCHITECTURE.md) · [100角色测评](docs/REVIEW-100.md)
+- [设计理念](docs/DESIGN.md) · [实现说明](docs/ARCHITECTURE.md) · [新版100角色测评](docs/REVIEW-ADULT-100.md) · [早期测评](docs/REVIEW-100.md)
 - [公开众生长卷](https://youyoustar.cn/yancheng80s/gallery.html)：完成游戏后自愿发布，每段人生拥有独立链接。
+
+## v0.3 的生活节奏
+
+工作后，年度重心三年一选，每年仍有具体生活选择。爱人、双方父母、孩子、运动、工作与房车会持续影响后面；触及健康、关系和资金门槛时提前进入转折。结局不再展示逐年账本。
+
+大学增加985类、211类与普通本科的综合准备门槛；重要节点可重选，真实重算后通过走马灯呈现变化。叙事朝安静、克制的白描调整，保留童年回忆。
 
 ## 本地运行
 
-需要 Python 3.10+。生产运行只使用 Python 标准库。
+建议 Python 3.10+。服务代码兼容现有 Python 3.8 环境，生产运行只使用 Python 标准库。
 
 ```sh
 python server.py

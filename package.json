@@ -1,10 +1,10 @@
 {
   "name": "yancheng80s",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "build:css": "tailwindcss -i ui.css -o styles.css --minify",
-    "test": "node --test tests/model.test.cjs tests/adult.test.cjs && node tests/logic.test.cjs && node tests/simulation.cjs && node tests/simulation.cjs --all && node tests/simulation.cjs --cohorts"
+    "test": "node --test tests/model.test.cjs tests/adult.test.cjs tests/adult-life.test.cjs tests/admission.test.cjs tests/replay.test.cjs && node tests/logic.test.cjs && node tests/simulation.cjs && node tests/simulation.cjs --all && node tests/simulation.cjs --cohorts"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17"

@@ -32,6 +32,7 @@
     .share-button{padding:10px 16px;background:#164e63;border:1px solid #22d3ee;border-radius:9px;color:#ecfeff;margin:8px 0;cursor:pointer}.share-link{display:block;color:#67e8f9;overflow-wrap:anywhere}.share-button:disabled{opacity:.5}
     .life-panel {padding:16px;border:1px solid #334155;border-radius:14px;background:#0f172a;font-size:12px;line-height:1.8;color:#cbd5e1;min-width:0}
     .life-panel p {margin:8px 0}.life-metrics{display:flex;flex-wrap:wrap;gap:8px 20px}.life-metrics b{color:#67e8f9}
+    .adult-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.adult-cards>div,.life-feedback{padding:12px;background:#172338;border-radius:10px}.adult-cards b,.life-feedback b{color:#a5dfce}.life-feedback{margin:10px 0;border-left:2px solid #539d88}.life-panel summary{cursor:pointer;padding:10px 0;color:#b8c8dc}@media(max-width:640px){.adult-cards{grid-template-columns:1fr}}
     .ledger-scroll{overflow-x:auto;max-width:100%}.ledger-scroll table{border-collapse:collapse;white-space:nowrap;width:100%}.ledger-scroll th,.ledger-scroll td{padding:6px 10px;text-align:right;border-bottom:1px solid #334155}
     #end-epitaph{white-space:pre-line} header>div{flex-wrap:wrap;gap:8px} #quick-status{flex-wrap:wrap}
     header a,#card-year{white-space:nowrap;flex-shrink:0} #card-actions button{gap:12px} #card-actions button>span:last-child{white-space:nowrap;flex-shrink:0}
@@ -212,7 +213,7 @@
           </div>
         </div>
 
-        <section id="life-dashboard" class="life-panel" aria-label="生活与成长账本"></section>
+        <section id="life-dashboard" class="life-panel" aria-label="生活与家人"></section>
         <!-- 当前事件卡片 (含场景配图徽章与事件类型标识) -->
         <div class="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl flex-1 flex flex-col justify-between relative overflow-hidden">
           
@@ -350,7 +351,7 @@
           </div>
         </div>
 
-        <section id="ending-life-ledger" class="life-panel" aria-label="半生账本"></section>
+        <section id="ending-life-ledger" class="life-panel" aria-label="半生生活近况"></section>
         <section class="life-panel"><h3>让别人读到你的人生</h3><p>点击发布后，游戏角色、半生总结和逐年经历将公开展示，并生成独立链接。不要将真实个人信息写入记录。本地收藏不自动公开。</p><button id="btn-publish-life" class="share-button">发布到公开众生长卷</button> <a href="gallery.html" class="share-link">阅读其他人的人生 →</a><div id="publish-status" role="status"></div></section>
         <!-- 逆旅一瞬：唯一一次重大选择逆转模块 -->
         <div id="rechoice-container" class="p-4 md:p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-950 to-cyan-950/50 border border-cyan-800/60 shadow-xl space-y-3">
@@ -366,7 +367,7 @@
             </span>
           </div>
           <p class="text-xs text-slate-300 leading-relaxed font-serif">
-            串场河的水从来不往回流，但站在中年渡口，天地忽起大雾……如果岁月许你撕毁一张旧船票，你最想退回人生的哪一个路口？
+            回头看，有些决定还记得很清楚。选一个重要的路口，再走一次，看看后来会有什么不同。
           </p>
           <div id="rechoice-action-box">
             <button id="btn-open-rechoice" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-400 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-bold text-xs md:text-sm shadow-lg shadow-cyan-500/20 active:scale-98 transition-all">
@@ -406,12 +407,12 @@
         <div class="flex items-center justify-between pb-3 border-b border-slate-800">
           <div>
             <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-widest">TIMELINE ROLLBACK</span>
-            <h4 class="text-base font-serif font-bold text-white mt-0.5">选择你执念最深的人生路口</h4>
+            <h4 class="text-base font-serif font-bold text-white mt-0.5">回到一个重要的路口</h4>
           </div>
           <button id="btn-close-modal" class="text-slate-400 hover:text-white text-sm px-2 py-1">✕ 关闭</button>
         </div>
         <p class="text-xs text-slate-300">
-          根据本局的真实选择进行想象式回望；它不会重新模拟人生，也不会计算新的资产：
+          从本局的重要节点重新选择。后续会按新条件推演，走马灯结束后可查看三年后的变化和半生对照。
         </p>
         <div id="rechoice-options-list" class="space-y-3">
           <!-- 动态注入可选逆转点 -->
@@ -423,11 +424,11 @@
     <div id="modal-cinematic" class="hidden fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center space-y-4">
       <div class="w-16 h-16 rounded-full border-4 border-cyan-500/20 border-t-cyan-400 animate-spin"></div>
       <div class="text-cyan-400 font-mono text-xs uppercase tracking-widest animate-pulse">
-        TIMELINE DIVERGING · 平行时空正在重组
+        那些年，重新经过
       </div>
       <div id="cinematic-year" class="text-3xl md:text-5xl font-serif font-black text-white">2002年</div>
       <div id="cinematic-text" class="text-xs md:text-sm text-slate-300 max-w-md font-serif leading-relaxed">
-        那一年，你做出了截然不同的抉择……
+        那一年，你作了另一个选择。
       </div>
     </div>
 
@@ -489,6 +490,7 @@
     盐阜大地 一代盐城人的时代岁月想象 · 未来的三四十年交给时间与儿孙去推拟
   </footer>
 
+  <script src="adult-life.js"></script>
   <script src="life-model.js"></script>
   <script src="public-client.js"></script>
   <!-- 核心逻辑与全生命周期数据脚本 -->
@@ -662,7 +664,7 @@
         { text: '【下班后在老城大排档就着猪头肉喝冰镇啤酒】跟三五好友高谈阔论，憧憬着五年内买一辆属于自己的车', log: '夏夜的大排档塑料圆桌前，推杯换盏之间畅想未来，二十岁出头的年纪，眼里全是对好日子的期盼。' }
       ],
       2003: [
-        { text: '【每天清晨在校门口喝下一碗苦涩微温的板蓝根】额头贴着体温计，少年们在白口罩后交换坚定眼神', log: '非典封校岁月，每天测温喝板蓝根，教室里白炽灯彻夜通明，高考的压力让每个人咬牙切齿。' },
+        { text: '【按学校安排记录体温，与同学互相打气】额头贴着体温计，少年们在白口罩后交换坚定眼神', log: '非典期间，你记得测温与口罩，也记得同学之间互相打气的日子。' },
         { text: '【空旷沉寂的考场里迎战葛军卷数学压轴题】教室里只有铅笔沙沙声和心跳声，咬牙抠出每一个步骤分', log: '数学葛军卷让全省学子抱头痛哭，坐在考场里冷汗浸透后背，死死守住最后一道大题的尊严。' }
       ],
       2004: [
@@ -784,7 +786,7 @@
       2000: { title: "千禧之年 · 盐城工学院新校区扩建", desc: "千禧年钟声敲响，老城区建军路地下商业街动工开挖，盐城高校迎来扩招浪潮。", wage: 1050 },
       2001: { title: "中国入世 · 东风悦达起亚正式签约诞生", desc: "悦达与韩国起亚合资成立汽车合资企业，盐城现代汽车产业航母正式起航！", wage: 1200 },
       2002: { title: "国民神车千里马下线 · 风靡大江南北", desc: "起亚千里马轿车在开发区一厂隆重下线，大街小巷响彻千里马广告，起亚工人受人羡慕。", wage: 1400 },
-      2003: { title: "非典封校考验 · 遭遇葛军卷天王", desc: "全校每天量体温喝板蓝根，江苏首次自主高考命题，数学葛军卷让无数做题家抱头痛哭。", wage: 1650 },
+      2003: { title: "非典来临 · 学习与生活的变化", desc: "非典进入日常，测温、口罩与对家人的担忧，成为许多人的时代记忆。", wage: 1650 },
       2004: { title: "轿车二厂启动 · 韩国街风情渐起", desc: "开发区三十万辆乘用车基地动工，开发区与老城出现众多韩餐烤肉与咖啡店，城市日新月异。", wage: 1900 },
       2005: { title: "盐都撤县设区 · 神舟六号太空漫游", desc: "原盐都县正式撤县设区融入大市区，家用台式电脑与宽带网络普及千家万户。", wage: 2200 },
       2006: { title: "城南新区建设指挥部正式成立！", desc: "市委市政府确立南进发展大战略，指挥部吹响号角，城南老农田开始拉开解放南路大框架！", wage: 2550 },
@@ -811,7 +813,7 @@
     };
 
     const TRAITS = [
-      { id: 'zuotijia', name: '【苏卷做题家】', desc: '做题抗压强，高考算法有+10分隐性加成。' },
+      { id: 'zuotijia', name: '【苏卷做题家】', desc: '做题抗压强，大学综合准备中的学业天赋+10，仍需学习积累与身心状态。' },
       { id: 'craftsman', name: '【硬核工匠精神】', desc: '机械精密与技术领悟力极高，车间与打工研发升级快。' },
       { id: 'haipai', name: '【知青海派气质】', desc: '眼界开阔，在上海苏州等大城市打拼有天然亲和力。' },
       { id: 'badawan', name: '【八大碗老饕】', desc: '深谙苏北人情世故与随礼规矩，人脉面子获取速度加快。' }
@@ -1207,7 +1209,7 @@
           { text: '【坐在小竹椅上跟着长辈去翻身河闸口看滚滚河水】小胖手指着翻腾的白色浪花咯咯欢笑', log: '翻身河老水闸奔腾咆哮，辽阔的水势启蒙了滨海孩童宽厚刚毅的性格。' }
         ],
         2: [
-          { text: '【大人在八仙桌上小酌八滩大曲，用筷子头蘸一滴老白酒抹在小舌头上】辣得直吐舌头引全家大笑', log: '浓烈醇厚的八滩老白酒香气飘荡在客堂里，这一口微辣成了滨海人骨子里豪爽血性的启蒙。' },
+          { text: '【坐在八仙桌旁吃饭】大人说着话，给你盛了一小碗热汤', log: '屋里有饭菜和酒曲的气味。大人慢慢吃，你抱着自己的小碗。' },
           { text: '【在坎北老农贸大棚前抓泥巴捏小泥人】把泥巴拍得啪啪响，玩得满脸泥巴依然乐呵呵', log: '坎北农贸市场的热闹喧嚣与泥土芬芳，陪伴着幼童度过最朴素纯真的岁月。' }
         ],
         3: [
@@ -1215,7 +1217,7 @@
           { text: '【第一次进滨海县幼儿园】抓着母亲衣角哭鼻子，分到一块五汛小香肠立马破涕为笑吃得香甜', log: '香喷喷的小香肠安抚了哭闹的幼小心灵，迈出离开家庭怀抱的第一步。' }
         ],
         4: [
-          { text: '【去滨海港看高高耸立的风力发电机大风车】巨大的白色风车在海风中缓缓转动，惊叹不已', log: '沿海旷野上白色大风车如擎天巨人，海风猎猎，壮阔的风电图景印在少年的瞳孔里。' },
+          { text: '【跟家人到海堤上看风】衣服被吹得鼓起来，你攥着大人的手', log: '海堤上的风很大，家人把你的衣领拉高。回去时，鞋里带了些细沙。' },
           { text: '【夏夜在翻身河大堤乘凉捉泥蟹与萤火虫】把泛绿光的萤火虫装进小玻璃药瓶枕在耳边入眠', log: '大堤夜风吹拂，幽微的萤火闪烁，伴着翻身河浪涛声安然入睡。' }
         ],
         5: [
@@ -2284,6 +2286,7 @@
       }
 
       reset() {
+        this.checkpoints=[];this.choiceTrail=[];this.originalLife=null;this.originalTrail=[];this.replayActive=false;this.projecting=false;this.projectionFrames=[];this.activeEvent=null;
         this.state = {
           birthYear: 1980,
           currentStep: 0,
@@ -2476,7 +2479,7 @@
         document.getElementById('birth-family').innerText = this.state.family.name;
         document.getElementById('birth-family-desc').innerText = `${this.state.family.desc}`;
         document.getElementById('birth-trait-name').innerText = this.state.trait.name;
-        document.getElementById('birth-trait-desc').innerText = '人物性格标签，用于叙事展示，暂不影响数值。';
+        document.getElementById('birth-trait-desc').innerText = '学业型天赋会参与大学准备评估；其他性格标签用于叙事，不决定人生高低。';
 
         document.getElementById('init-health').innerText = this.state.stats.health;
         document.getElementById('init-mood').innerText = this.state.stats.mood;
@@ -2732,6 +2735,7 @@
               isFinalYear: true
             });
           }
+          if([2003,2020,2022].includes(currentYear))chain.push({year:currentYear,age,isEra:true,icon:'🌏',title:'时代与日常',desc:'时代改变了生活安排。'});
           // 12. 普通年份：时代个人记忆切片
           if (chain.length === storyStart) {
             chain.push({
@@ -2755,7 +2759,8 @@
       }
 
       renderCurrentEvent() {
-        const ev = this.state.eventsChain[this.state.currentStep];
+        let ev = this.state.eventsChain[this.state.currentStep];
+        if(ev){ev=AdultLife.adapt(this.state,ev);this.state.eventsChain[this.state.currentStep]=ev;}
         const local = YC_LOCAL_LORE[(this.state.region && this.state.region.id) || 'th'] || YC_LOCAL_LORE.th;
         if (ev) {
           LifeModel.begin(this.state, ev.year);
@@ -2785,7 +2790,10 @@
         document.getElementById('card-age').innerText = `${ev.age}岁`;
         document.getElementById('card-icon').innerText = ev.icon;
         document.getElementById('card-title').innerText = ev.title;
-        document.getElementById('card-desc').innerText = ev.desc;
+        let desc=ev.desc;
+        if((ev.isEighteenFork&&!['tech','zhongzhuan','apprentice'].includes(this.state.schoolTrack))||ev.isRetakeExamFork){const a=LifeModel.admission(this.state);desc+=`\n综合准备 ${a.score}：学识折算 ${(a.study*.72).toFixed(1)}＋学习习惯 ${a.habits}＋天赋 ${a.talent}＋家庭学习支持 ${a.family.toFixed(1)}＋学校积累 ${a.school}＋身心状态 ${a.condition}。这是游戏门槛，不是真实高考分数；优秀学生可通过努力和助学克服家境限制。`;}
+        if(ev.isAnnualPlan&&ev.age>=23){ev.title=`${ev.year}年 · 接下来三年，把重心放在哪里`;desc='选择会延续至下一次三年回看。健康、关系和资金触线时会提前出现转折；每年仍可安排具体生活事务。';document.getElementById('card-title').innerText=ev.title;}
+        document.getElementById('card-desc').innerText = desc;
         document.getElementById('card-type-tag').innerText = ev.typeTag || '生活纪实';
 
         let trackLabel = "少年筑基期";
@@ -2803,6 +2811,9 @@
 
         this.renderLifeDashboard();
         this.renderOptions(ev);
+        if(ev.isAnnualPlan&&ev.age>=18&&LifeModel.working(this.state)&&this.state.life.directionYear!==undefined&&ev.year-this.state.life.directionYear<3){
+          this.handleOption({focus:this.state.life.direction,autoFocus:true,effect:{},log:`延续这三年的${LifeModel.focuses[this.state.life.direction]}安排。`},ev);
+        }
       }
 
 renderOptions(ev) {
@@ -3288,9 +3299,11 @@ renderOptions(ev) {
 
         candidateOptions = this.deepOptions(ev, candidateOptions);
         candidateOptions = candidateOptions.map(o=>o.risk?{...o,text:o.text+`（本次成功概率约${Math.round(LifeModel.chance(s)*100)}%）`}:o);
+        this.currentOptions=candidateOptions;
         // 渲染选项列表
         candidateOptions.forEach(opt => {
           const btn = document.createElement('button');
+          btn.adultTopic=opt.adultTopic;
           let isLocked = false;
           let lockReason = '';
 
@@ -3304,6 +3317,7 @@ renderOptions(ev) {
             }
           }
 
+          if(opt.adultLocked){isLocked=true;lockReason=opt.adultLocked;}
           if(opt.reqSkill && s.life.skill<opt.reqSkill){isLocked=true;lockReason=`需专业技能${opt.reqSkill}`;}
           if (isLocked) {
             btn.disabled = true;
@@ -3326,14 +3340,21 @@ renderOptions(ev) {
 
       deepOptions(ev, original) {
         const s=this.state,l=s.life,age=ev.age;
+        if(ev.isAdultLife)return AdultLife.options(s,ev,LifeModel);
+        if((ev.isEighteenFork&&!['tech','zhongzhuan','apprentice'].includes(s.schoolTrack))||ev.isRetakeExamFork){
+          const repeat=!!ev.isRetakeExamFork,opts=LifeModel.universityOptions(s,ev.year,repeat);
+          if(!repeat)opts.push({text:'【高复班再准备一年】学识+12，增加学习习惯；情绪与费用有代价',schoolType:'gaofu',careerSet:'student',effect:{study:12,mood:-8,wealth:-.5},log:'你选择再准备一年，重新争取适合自己的大学。'});
+          opts.push({text:repeat?'【结束复读，学习技术并就业】':'【选择技术岗位，从实践起步】',schoolType:repeat?'retake_work':undefined,careerSet:'industry',effect:{mood:2},log:'你决定进入技术岗位，开始另一种积累。'});return opts;
+        }
         if(ev.isAnnualPlan) return [
           {text:'【平衡生活】正常工作学习，留一点休息时间',focus:'balanced',effect:{},log:'今年选择平衡生活。'},
           {text:'【进修学习】技能成长更快；工作收入少6%，另花基础年收入的6%培训',focus:'learn',effect:{},log:'今年把时间和费用投入学习。'},
-          {text:'【投入工作】工作收入增加18%，但健康-5、关系-3',focus:'work',effect:{},log:'今年更专注工作与收入。'},
-          {text:'【陪伴家人】关系+6、心情+4，工作收入减少10%',focus:'family',effect:{},log:'今年为亲友留出了更多时间。'},
+          {text:'【投入工作】工作收入增加18%，但健康-5，压力增加、陪伴减少',focus:'work',effect:{},log:'今年更专注工作与收入。'},
+          {text:'【陪伴家人】增加对家人与亲友的陪伴，心情+4，工作收入减少10%',focus:'family',effect:{},log:'今年为亲友留出了更多时间。'},
           {text:'【锻炼休息】健康+6、心情+3，工作收入减少8%',focus:'health',effect:{},log:'今年开始认真照顾自己的身体。'}
         ];
         if(ev.isTurningPoint) {
+          if(ev.kind==='adult-plan'&&(s.stats.health<20||s.stats.wealth<-5||s.adult.yearEffect.hospital))return [{text:'【先完成恢复与周转安排】这一年不再增加长期负担',effect:{},log:'你把额外计划留到身体和周转稳定以后。'}];
           if(ev.kind==='adult-plan')return [
             {text:'【两年在职进修】报名0.5万；每年收入少10%、另付基础年收入10%的学费，技能额外+5；结业再决定是否转行',plan:'retrain',req:{wealth:0.5},effect:{},log:'你报名两年在职进修，决定先为新的可能积累能力。'},
             ...(['industry','company','apprentice'].includes(s.career)?[{text:'【三年异地工作】搬迁1万；每年工作收入多25%，额外食宿为基础年收入12%，关系-3；三年后重新安排生活',plan:'relocate',req:{wealth:1},effect:{},log:'你接下三年的异地工作安排，收入与离家的代价一起到来。'}]:[]),
@@ -3402,7 +3423,7 @@ renderOptions(ev) {
         const done=l.plans.find(p=>p.status==='completed'&&!p.seen);
         if(done)return {year:ev.year,age,icon:'📮',typeTag:'此前选择的后续',isTurningPoint:true,kind:'plan-result',planId:done.id,title:`${done.start}年开始的${done.label}，如今走到了下一步`,desc:'这些年的收入、开支与积累已经记入账本。你可以根据现在的条件，决定如何继续。'};
         const due=(kind,n)=>ev.year-(l.turningYears[kind]||0)>=n;
-        let kind=s.stats.health<35&&due('health',2)?'health':s.stats.wealth<0&&due('cash',2)?'cash':l.bonds<25&&due('family',3)?'family':!l.activePlan&&age%4===0?'adult-plan':l.skill>=40&&age%3===0?'opportunity':null;
+        let kind=!l.activePlan&&age%4===0?'adult-plan':l.skill>=40&&age%3===0?'opportunity':null;
         if(!kind)return null;
         l.turningYears[kind]=ev.year;
         return {year:ev.year,age,icon:'↗',typeTag:'经历带来的转折',isTurningPoint:true,kind,
@@ -3411,15 +3432,22 @@ renderOptions(ev) {
       }
 
       renderLifeDashboard(ending=false){
-        const s=this.state,l=LifeModel.init(s),host=document.getElementById(ending?'ending-life-ledger':'life-dashboard');
+        const s=this.state,l=LifeModel.init(s),a=s.adult,host=document.getElementById(ending?'ending-life-ledger':'life-dashboard');
         if(!host)return;
         host.hidden=!ending && (s.eventsChain[s.currentStep]?.age??0)<18;
         if(host.hidden)return;
-        const last=l.ledger.at(-1),h=l.home;
-        host.innerHTML=`<div class="life-metrics"><span>专业技能 <b>${l.skill}/100</b></span><span>家人关系 <b>${l.bonds}/100</b></span><span>${LifeModel.jobLabel(s)}</span><span>现金 <b>${s.stats.wealth.toFixed(1)}万</b>${s.stats.wealth<0?' · 周转欠款':''}</span></div>
-        <p>${l.activePlan?`正在进行：${l.activePlan.label}（${l.activePlan.start}—${l.activePlan.end}年）`:"当前没有额外长期计划"}</p><p>${h?`住房估值 ${h.value.toFixed(1)}万 · 剩余房贷 ${h.balance.toFixed(1)}万`:'尚未持有住房'} · 净资产 ${LifeModel.netWorth(s).toFixed(1)}万</p>
-        ${last?`<p>${last.year}年已结账：收入 +${last.income.toFixed(2)}万 · 日常及贷款支出 -${last.expense.toFixed(2)}万 · 事件净变动 ${last.events.toFixed(2)}万${last.shock?' · '+last.shock:''}</p>`:'18岁起，年内所有选择完成后统一结账。'}
-        <details ${ending?'open':''}><summary>查看逐年账本（万元）</summary><div class="ledger-scroll"><table><thead><tr><th>年份</th><th>重心</th><th>期初</th><th>收入</th><th>生活</th><th>学费/进修</th><th>租住/维护</th><th>房贷</th><th>欠款息</th><th>计划开支</th><th>事件</th><th>期末</th></tr></thead><tbody>${l.ledger.filter(r=>r.age>=18).map(r=>`<tr><td>${r.year}</td><td>${LifeModel.focuses[r.focus]}</td><td>${r.open.toFixed(2)}</td><td>${r.income.toFixed(2)}</td><td>${r.living.toFixed(2)}</td><td>${(r.tuition+r.training).toFixed(2)}</td><td>${r.rent.toFixed(2)}</td><td>${r.mortgage.toFixed(2)}</td><td>${r.debtInterest.toFixed(2)}</td><td>${r.planExpense.toFixed(2)}</td><td>${r.events.toFixed(2)}</td><td>${r.close.toFixed(2)}</td></tr>`).join('')}</tbody></table></div></details>`;
+        const year=ending?2026:s.eventsChain[s.currentStep].year,last=l.ledger.at(-1),h=l.home,p=a.partner;
+        const relationship=a.relationship==='single'?'单身，自在经营生活':a.relationship==='separated'?'分开后，重新安排生活':`${a.relationship==='married'?'爱人':'交往中'} ${p.name} · 亲近 ${Math.round(p.closeness)}`;
+        host.innerHTML=`<div class="adult-cards"><div><b>爱人与孩子</b><p>${relationship}</p><p>${a.children.length?a.children.map(c=>`${c.name} ${year-c.birthYear}岁 · 亲近 ${Math.round(c.closeness)} · 成长体验 ${Math.round(c.growth)}`).join('<br>'):'未养育孩子 · 按自己的节奏生活'}</p></div>
+        <div><b>父母与牵挂</b><p>${AdultLife.elders(s).map(e=>`${e.label} ${year-e.birthYear}岁 · 身体 ${Math.round(e.health)}${e.care&&e.care.until>=year?' · 照护至'+e.care.until+'年':''}`).join('<br>')}</p></div>
+        <div><b>身体与日常</b><p>健康 ${s.stats.health} · 压力 ${Math.round(a.stress)}</p><p>${a.exercise==='regular'?`规律运动 ${a.exerciseYears}年`:'轻量或不定期运动'} · 亲友联系 ${Math.round(a.social)}</p><p>${a.car?'家用车 '+(year-a.car.year)+'年 · 余贷 '+a.car.balance.toFixed(1)+'万':'公交、骑行或步行'}</p></div></div>
+        ${a.feedback?`<div class="life-feedback"><b>${a.feedback.year}年 · 你的选择留下了什么</b><p>${a.feedback.text}</p></div>`:''}
+        ${last?.notes.length?`<div class="life-feedback"><b>${last.year}年 · 日子里的变化</b><p>${last.notes.slice(0,3).join('<br>')}</p></div>`:''}
+        <div class="life-metrics"><span>${LifeModel.jobLabel(s)} · 技能 ${l.skill}</span><span>现金 <b>${s.stats.wealth.toFixed(1)}万</b>${s.stats.wealth<0?' · 周转欠款':''}</span></div>
+        ${l.activePlan?`<p>正在进行：${l.activePlan.label}（${l.activePlan.start}—${l.activePlan.end}年）</p>`:''}
+        ${ending?'':`<details><summary>收支与资产摘要（可展开）</summary><p>${h?`住房估值 ${h.value.toFixed(1)}万 · 剩余房贷 ${h.balance.toFixed(1)}万`:'暂未持有住房'} · 模拟净资产 ${LifeModel.netWorth(s).toFixed(1)}万</p>
+        <p>最近五年，金额单位万元。收入含共同生活期间的伴侣收入；支出含日常、养育、照护与贷款。</p>
+        <div class="ledger-scroll"><table><thead><tr><th>年份</th><th>收入</th><th>支出</th><th>养育/照护</th><th>事件收支</th><th>年末现金</th></tr></thead><tbody>${l.ledger.filter(r=>r.age>=18).slice(-5).map(r=>`<tr><td>${r.year}</td><td>${r.income.toFixed(2)}</td><td>${r.expense.toFixed(2)}</td><td>${((r.childExpense||0)+(r.careExpense||0)).toFixed(2)}</td><td>${r.events.toFixed(2)}</td><td>${r.close.toFixed(2)}</td></tr>`).join('')}</tbody></table></div></details>`}`;
       }
 
       // =========================================================================
@@ -3429,13 +3457,21 @@ renderOptions(ev) {
         if (this.activeEvent && this.activeEvent !== ev) return;
         if (option.req && Object.entries(option.req).some(([key,value]) => (this.state.stats[key] || 0) < value)) return;
         LifeModel.begin(this.state, ev.year);
+        if(option.adultLocked || option.universityTier&&LifeModel.admission(this.state).score<option.universityThreshold)return;
+        if(option.adultTopic){this.choiceTrail.push({key:this.eventKey(ev),optionKey:this.optionKey(option)});this.state.eventsChain[this.state.currentStep]=AdultLife.event(this.state,ev.year,option.adultTopic);this.renderCurrentEvent();return;}
+        if(!this.replayActive&&!option.autoFocus){
+          const important=this.isImportantNode(ev,option);
+          if(important)this.checkpoints.push({event:JSON.parse(JSON.stringify(ev)),choice:option.log||option.text,optionKey:this.optionKey(option),snapshot:JSON.stringify(this.state),trailLength:this.choiceTrail.length});
+        }
+        this.choiceTrail.push({key:this.eventKey(ev),optionKey:this.optionKey(option)});
+        if(option.adultAction){const result=AdultLife.choose(this.state,ev,option.adultAction,LifeModel);if(!result)return;option={...option,log:result.log,effect:{}};}
         if(option.reqSkill && this.state.life.skill<option.reqSkill)return;
         if(option.plan && !LifeModel.startPlan(this.state,option.plan,ev.year))return;
         if(option.cancelPlan)LifeModel.cancelPlan(this.state,ev.year);
         if(option.completePlanId){const p=this.state.life.plans.find(p=>p.id===option.completePlanId);if(p)p.seen=true;}
 
         if (option.buyHome && !LifeModel.buy(this.state,option.buyHome,ev.year)) return;
-        if (option.focus) this.state.life.focus = option.focus;
+        if (option.focus){this.state.life.focus=option.focus;if(!option.autoFocus&&LifeModel.working(this.state)){this.state.life.direction=option.focus;this.state.life.directionYear=ev.year;}}
         if (option.recovery) this.state.life.recovery = option.recovery;
         if (option.risk) {
           const chance = LifeModel.chance(this.state);
@@ -3445,7 +3481,7 @@ renderOptions(ev) {
           this.state.life.investments.push({year:ev.year,success,change:option.effect.wealth});
         }
         if (option.skill) this.state.life.skill = Math.min(100,this.state.life.skill+option.skill);
-        if (option.bonds) this.state.life.bonds = Math.max(0,Math.min(100,this.state.life.bonds+option.bonds));
+        if (option.bonds) AdultLife.improveBonds(this.state,option.bonds);
 
         const local = (this.state.region && YC_LOCAL_LORE[this.state.region.id]) || YC_LOCAL_LORE.th;
         if (option.effect) {
@@ -3461,6 +3497,8 @@ renderOptions(ev) {
                 if (option.schoolTrack !== undefined) this.state.schoolTrack = option.schoolTrack;
         if (option.careerSet) LifeModel.changeCareer(this.state,option.careerSet,ev.year);
         if (ev.isEighteenFork && option.careerSet && option.careerSet !== 'student') this.state.education = 'finished';
+        if(ev.age>=14&&ev.age<=19&&option.effect?.study>0)this.state.life.studyHabits=Math.min(4,this.state.life.studyHabits+1);
+        if(option.universityTier){this.state.universityTier=option.universityTier;this.state.universityAid=LifeModel.admission(this.state).aid;}
         if (option.schoolType) {
           this.state.gaokaoChoice = option.schoolType;
           if (option.schoolType === 'gaofu') {
@@ -3491,7 +3529,7 @@ renderOptions(ev) {
         if (option.parentSacrifice) this.state.parentSacrifice = true;
 
         const logText = option.log || option.text;
-        if (ev.isTurningPoint || ev.isMiddleSchoolFork || ev.isEighteenFork || ev.isCareerAffinityFork || ev.isStockBullFork || ev.isHouseFork || ev.isP2PFork || ev.isCareerCrisisFork || ev.isParentIllnessFork) {
+        if (ev.isAdultLife || ev.isTurningPoint || ev.isMiddleSchoolFork || ev.isEighteenFork || ev.isCareerAffinityFork || ev.isStockBullFork || ev.isHouseFork || ev.isP2PFork || ev.isCareerCrisisFork || ev.isParentIllnessFork) {
           this.state.majorDecisions.push({year: ev.year, age: ev.age, title: ev.title, choice: logText});
         }
         const line = document.createElement('div');
@@ -3500,19 +3538,31 @@ renderOptions(ev) {
         document.getElementById('history-log').prepend(line);
 
         Object.keys(this.state.stats).filter(k=>k!=='wealth').forEach(k=>{this.state.stats[k]=Math.max(0,Math.min(100,this.state.stats[k]));});
-        this.state.logs.push({year:ev.year,age:ev.age,title:ev.title||'',text:logText});
+        if(!option.autoFocus)this.state.logs.push({year:ev.year,age:ev.age,title:ev.title||'',text:logText});
+        if(ev.isAdultLife&&option.adultAction)this.state.eventsChain=this.state.eventsChain.filter((item,i)=>i<=this.state.currentStep||item.year!==ev.year||!(ev.topic==='relationship'&&item.isMarriageFork||ev.topic==='parents'&&item.isParentIllnessFork||ev.topic==='housing'&&item.isHouseFork));
         if (ev.isAnnualPlan) {
-          const turning = this.makeTurningPoint(ev);
-          if (turning) this.state.eventsChain.splice(this.state.currentStep+1,0,turning);
+          const chain=this.state.eventsChain,turning=this.makeTurningPoint(ev),adult=AdultLife.yearlyEvent(this.state,ev.year),extra=[];
+          const sameYear=chain.filter((e,i)=>i>this.state.currentStep&&e.year===ev.year);
+          if(adult&&!sameYear.some(e=>e.isMarriageFork&&adult.topic==='relationship'||e.isParentIllnessFork&&adult.topic==='parents')){
+            const ordinary=chain.findIndex((e,i)=>i>this.state.currentStep&&e.year===ev.year&&e.age>=23&&!Object.keys(e).some(k=>k.startsWith('is')));
+            if(ordinary>=0)chain.splice(ordinary,1);
+            extra.push(adult);
+          }
+          if(turning)extra.push(turning);
+          chain.splice(this.state.currentStep+1,0,...extra);
         }
+        if(ev.topic==='followup')this.state.eventsChain.splice(this.state.currentStep+1,0,AdultLife.event(this.state,ev.year,'hub'));
         const next = this.state.eventsChain[this.state.currentStep+1];
-        if (!next || next.year !== ev.year) LifeModel.settle(this.state,ev.year);
+        if (!next || next.year !== ev.year){const result=LifeModel.settle(this.state,ev.year);
+          if(result.notes.length)this.state.logs.push({year:ev.year,age:ev.age,title:'这一年的生活变化',text:result.notes.slice(0,3).join(' ')});
+        }
         this.state.currentStep++;
         if (this.state.currentStep >= this.state.eventsChain.length) {
           this.endGame();
         } else {
           this.renderCurrentEvent();
         }
+        if(this.replayActive&&!this.projecting)this.projectFromNode();
       }
 
       
@@ -3556,7 +3606,7 @@ renderOptions(ev) {
           if (age <= 6) cLi.status = '【幼年】在射阳河畔看粮船过桥，在煤油灯下跟着父亲描红识字。';
           else if (age <= 14) cLi.status = '【少年】县城租房陪读，奥数班顶尖尖子，草稿纸堆了一米高，戴厚近视镜。';
           else if (age <= 17) cLi.status = '【省阜中尖子】全县前五名考入省阜中尖子班，高三晚自习死磕葛军卷。';
-          else if (age <= 21) cLi.status = '【名校本科】高考斩获620分考入南京名牌大学计算机系，大厂校招拿到Offer。';
+          else if (age <= 21) cLi.status = '【本科在读】在南京学习计算机，平时上课，周末去机房练习。毕业后的事还没有定下来。';
           else if (age <= 27) cLi.status = '【大厂白领】在苏州/南京互联网大厂做架构师，月薪两万，头发日渐稀疏。';
           else if (age <= 34) cLi.status = '【省城大平层】在南京河西高位按揭买下大平层背负两万月供，每月紧绷不敢歇。';
           else if (age <= 40) cLi.status = '【大厂降薪潮】遭遇互联网裁员风暴，大平层缩水百万，兼顾古稀父母，负重坚守。';
@@ -3606,7 +3656,7 @@ renderOptions(ev) {
         document.getElementById('quick-year').innerText=2026;
         document.getElementById('quick-age').innerText=finalAge;
         document.getElementById('quick-wealth').innerText=s.stats.wealth.toFixed(1);
-        const houseEquityDesc = '（现金＋住房估值－剩余房贷）';
+        const houseEquityDesc = '（现金＋房车净值）';
         const title = `【${s.region.name} · ${s.personName}的半生】`;
         const epitaph = LifeModel.summary(s);
         const statusBadge = `2026 · ${LifeModel.jobLabel(s)}`;
@@ -3657,261 +3707,47 @@ renderOptions(ev) {
       // =========================================================================
       // 逆旅一瞬：千人千面·动态生成精准痛点与人生悔棋
       // =========================================================================
-            openRechoiceModal() {
-        if (this.state.rechoiceUsed) {
-          alert('逆旅一瞬一生仅许悔棋一次，天道不可反复！');
-          return;
-        }
-
-        const modal = document.getElementById('modal-rechoice');
-        const list = document.getElementById('rechoice-options-list');
-        list.innerHTML = '';
-        modal.classList.remove('hidden');
-
-        const s = this.state;
-        const by = s.birthYear;
-        const pName = s.personName;
-        // A reflection uses the player's recorded choices; it is not a second simulation.
-        const regrets = s.majorDecisions.slice(-4).map(d => ({
-          year: d.year,
-          age: d.age,
-          theme: d.title,
-          name: `${d.age}岁 · 回望这一年的选择`,
-          desc: '想象当时选择另一条路会怎样。以下是留白式回望，不会重新计算事件或资产。',
-          originChoice: d.choice,
-          reChoice: '如果当时选择不同，也许会遇到另一组机会和困难。',
-          newTitle: '【另一种可能 · 留给想象】',
-          newCareer: '未模拟',
-          wealthMod: 0,
-          newEpitaph: '这条平行人生尚未模拟。不同选择可能带来不同际遇，未来仍有许多未知。',
-          isBetter: false,
-          timeline: [{year: d.year, text: '在这个岔路口，你想象了另一种可能。'},
-                     {year: 2026, text: '回到当下，未来仍由接下来的选择写就。'}]
-        }));
-        // 渲染逆转选项列表
-        regrets.forEach((r, idx) => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = "p-4 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-amber-400 transition-all space-y-2 cursor-pointer shadow-md";
-          itemDiv.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">逆转时空节点 · ${r.year}年 (${r.age}岁)</span>
-              <span class="text-[10px] text-slate-400 font-mono">${r.wealthMod >= 0 ? '+' : ''}${r.wealthMod.toFixed(1)}万 模拟资产变化</span>
-            </div>
-            <div class="font-serif font-bold text-sm text-slate-200 hover:text-amber-300 transition-colors">
-              ${r.name}
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed font-serif">
-              ${r.desc}
-            </p>
-            <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
-              <span class="text-rose-400/90 truncate max-w-[200px]">当时：${r.originChoice}</span>
-              <button class="px-3 py-1 rounded bg-amber-600/80 hover:bg-amber-500 text-white font-serif font-bold text-xs shadow">
-                选择悔棋此步 →
-              </button>
-            </div>
-          `;
-
-          itemDiv.onclick = () => {
-            this.executeRealisticRechoice(r);
-          };
-
-          list.appendChild(itemDiv);
-        });
+      eventKey(ev){return `${ev.year}|${ev.topic||ev.kind||Object.keys(ev).filter(k=>k.startsWith('is')&&ev[k]).join(',')||ev.title}`;}
+      optionKey(o){return (o.adultTopic?'topic:'+o.adultTopic:null)||o.adultAction||o.focus||o.plan||o.buyHome||(o.schoolType?o.schoolType+'-'+(o.universityTier||''):null)||o.careerSet||o.text;}
+      isImportantNode(ev,o){return !!(ev.isMiddleSchoolFork||ev.isEighteenFork||ev.isRetakeExamFork||ev.isCareerAffinityFork||ev.isCareerCrisisFork||ev.isHouseFork||o.plan||['meet','marry','separate','have-child','house-local','house-mortgage','car-loan','car-cash','hospital-care'].includes(o.adultAction)||ev.topic==='debt'||ev.topic==='relationship'&&this.state.adult.partner?.closeness<30||o.adultAction?.startsWith('care-'));}
+      openRechoiceModal() {
+        if(this.state.rechoiceUsed)return;
+        const modal=document.getElementById('modal-rechoice'),list=document.getElementById('rechoice-options-list');list.innerHTML='';modal.classList.remove('hidden');
+        for(const c of this.checkpoints){const b=document.createElement('button');b.className='w-full p-4 rounded-xl bg-slate-900 border border-slate-700 text-left text-sm';b.innerHTML=`<b>${c.event.year}年 · ${c.event.age}岁 · ${c.event.title}</b><p class="text-xs text-slate-400 mt-2">当时：${c.choice}</p><p class="text-xs text-cyan-300 mt-2">回到这个节点，改选后推演后续人生 →</p>`;b.onclick=()=>this.startNodeReplay(c);list.appendChild(b);}
       }
-
-      executeRealisticRechoice(rechoiceItem) {
-        document.getElementById('modal-rechoice').classList.add('hidden');
-        this.state.rechoiceUsed = true;
-
-        const fastForwardBox = document.getElementById('rechoice-fast-forward');
-        if (fastForwardBox) fastForwardBox.classList.remove('hidden');
-
-        const ffYear = document.getElementById('fast-forward-year');
-        const ffEvent = document.getElementById('fast-forward-event');
-
-        let step = 0;
-        const timeline = rechoiceItem.timeline || [];
-
-        const timer = setInterval(() => {
-          if (step < timeline.length) {
-            const item = timeline[step];
-            if (ffYear) ffYear.innerText = item.year + ' 年';
-            if (ffEvent) ffEvent.innerText = item.text;
-            step++;
-          } else {
-            clearInterval(timer);
-            setTimeout(() => {
-              if (fastForwardBox) fastForwardBox.classList.add('hidden');
-              this.renderDualLifeComparison(rechoiceItem);
-            }, 600);
-          }
-        }, 850);
+      startNodeReplay(c){
+        this.originalLife=JSON.parse(JSON.stringify(this.state.firstLifeSnapshot));this.originalTrail=this.choiceTrail.slice(c.trailLength);this.replayNode={year:c.event.year,title:c.event.title,choice:c.choice};
+        this.state=JSON.parse(c.snapshot);this.state.rechoiceUsed=true;this.replayActive=true;this.replayCursor=1;this.activeEvent=null;this.choiceTrail=this.choiceTrail.slice(0,c.trailLength);
+        document.getElementById('modal-rechoice').classList.add('hidden');document.getElementById('dual-life-container').classList.add('hidden');document.getElementById('publish-status').textContent='';
+        this.showScreen('screen-game');this.renderCurrentEvent();document.getElementById('card-desc').innerText+='\n这是重选的重要节点。改选后，日常安排尽量沿用原人生；不再可行的选择会按当前条件重新安排，并真实结算到2026年。';
       }
-
-      renderDualLifeComparison(rechoiceItem) {
-        const dualContainer = document.getElementById('dual-life-container');
-        if (dualContainer) dualContainer.classList.remove('hidden');
-
-        const rechoiceContainer = document.getElementById('rechoice-container');
-        if (rechoiceContainer) rechoiceContainer.classList.add('hidden');
-
-        const life1 = this.state.firstLifeSnapshot || {
-          title: '【原初人生】',
-          finalAge: 40,
-          wealth: 15.0,
-          epitaph: '原初一生坎坷起伏，酸甜苦辣尽尝。',
-          statusBadge: '第一世'
-        };
-
-        const newWealth = life1.wealth;
-
-        dualContainer.innerHTML = `
-          <div class="p-4 md:p-6 rounded-2xl bg-slate-900/95 border border-cyan-500/50 shadow-2xl space-y-5 animate-fade-in">
-            
-            <div class="text-center space-y-1 pb-3 border-b border-slate-800">
-              <span class="text-[10px] font-mono uppercase tracking-widest text-cyan-400">DUAL-LIFE REALISM COMPARISON · 平行双世与发小群像</span>
-              <h3 class="text-xl md:text-2xl font-serif font-black text-white">
-                【双世命运对照画卷 · 凡心释怀】
-              </h3>
-              <p class="text-xs text-slate-400 font-serif">
-                逆转分水岭：<span class="text-amber-300 font-bold">${rechoiceItem.name}</span>
-              </p>
-            </div>
-
-            <!-- 两世并列矩阵卡片 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              
-              <!-- 第一世：实然命途 (原初) -->
-              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
-                <div class="flex justify-between items-center pb-1.5 border-b border-slate-800">
-                  <span class="font-serif font-bold text-slate-300 text-sm">【第一世 · 实然苦乐】</span>
-                  <span class="text-[10px] text-slate-500 font-mono">ORIGINAL PATH</span>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">原定卷封号</div>
-                  <div class="font-bold text-slate-200 text-sm">${life1.title}</div>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">原2026资产净值</div>
-                  <div class="font-mono font-bold text-yellow-400 text-sm">${life1.wealth.toFixed(1)} 万元</div>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">原初执念与抉择</div>
-                  <div class="text-rose-400/90 font-serif">${rechoiceItem.originChoice}</div>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">原初生平墓志铭</div>
-                  <div class="text-slate-400 italic font-serif leading-relaxed">“${life1.epitaph}”</div>
-                </div>
-              </div>
-
-              <!-- 第二世：应然平行 (逆转宿命) -->
-              <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/80 space-y-2.5 shadow-lg shadow-cyan-950/50">
-                <div class="flex justify-between items-center pb-1.5 border-b border-cyan-800/60">
-                  <span class="font-serif font-bold text-cyan-300 text-sm">【第二世 · 平行代偿】</span>
-                  <span class="text-[10px] text-cyan-400 font-mono">PARALLEL REALITY</span>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">改写后新封号</div>
-                  <div class="font-bold text-cyan-200 text-sm">${rechoiceItem.newTitle}</div>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">平行2026资产净值</div>
-                  <div class="font-mono font-bold ${newWealth < 0 ? 'text-rose-400' : 'text-emerald-400'} text-sm">${newWealth.toFixed(1)} 万元 <span class="text-[10px] ${rechoiceItem.wealthMod >= 0 ? 'text-emerald-500' : 'text-rose-400'} font-normal">(${rechoiceItem.wealthMod >= 0 ? '+' + rechoiceItem.wealthMod.toFixed(1) : rechoiceItem.wealthMod.toFixed(1)}万)</span></div>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">平行换轨代价</div>
-                  <div class="text-amber-400/90 font-serif">${rechoiceItem.reChoice}</div>
-                </div>
-                <div>
-                  <div class="text-slate-500 text-[10px]">平行生平墓志铭</div>
-                  <div class="text-slate-300 italic font-serif leading-relaxed">“${rechoiceItem.newEpitaph}”</div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- 同期其他几个人（四大发小）2026年活法与命运映照 -->
-            <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
-              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                <div class="flex items-center space-x-2">
-                  <span class="text-amber-400">👥</span>
-                  <span class="font-serif font-bold text-slate-200 text-xs">【同期四大发小 · 2026同龄浮世绘】</span>
-                </div>
-                <span class="text-[10px] text-slate-500 font-mono">COHORTS MIRROR 2026</span>
-              </div>
-              <p class="text-[11px] text-slate-400 font-serif leading-relaxed">
-                当年一同在老街石桥上滚铁环、抓泥鳅的伙伴们，与你同历这四十余载时代洪流。无论你换哪条轨道，看看他们如今的模样，谁人不在风霜中负重前行：
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-[11px]">
-                
-                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 space-y-1">
-                  <div class="flex justify-between items-center">
-                    <span class="font-bold text-slate-200 font-serif">小李 (重点普高做题家)</span>
-                    <span class="text-[10px] text-cyan-400 font-mono">净资产 ~60万 (房贷中)</span>
-                  </div>
-                  <p class="text-slate-400 leading-relaxed">南邮毕业留南京大厂，35岁被优化降薪，2023年退回盐城城南聚龙湖买了改善房。现在在城南搞软件外包，周末微秃微胖带着黑眼圈陪二胎刷奥数。</p>
-                </div>
-
-                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 space-y-1">
-                  <div class="flex justify-between items-center">
-                    <span class="font-bold text-slate-200 font-serif">小张 (技校/悦达工匠)</span>
-                    <span class="text-[10px] text-cyan-400 font-mono">净资产 ~35万 (小工坊)</span>
-                  </div>
-                  <p class="text-slate-400 leading-relaxed">进悦达起亚流水线经历合资车黄金十年与转型阵痛。2018年离职在亭湖汽配园开了一家冲压模具作坊，满手油污厚茧，啤酒肚大，喝起绿雨啤酒依然爽朗。</p>
-                </div>
-
-                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 space-y-1">
-                  <div class="flex justify-between items-center">
-                    <span class="font-bold text-slate-200 font-serif">小王 (大院子弟/县局公职)</span>
-                    <span class="text-[10px] text-cyan-400 font-mono">净资产 ~45万 (公积金稳)</span>
-                  </div>
-                  <p class="text-slate-400 leading-relaxed">中专毕业招干进县局，四平八稳熬到副科级。每天保温杯泡枸杞按时上下班，开着一辆十年的老大众朗逸，逢年过节发米面油，从不涉足股市险滩。</p>
-                </div>
-
-                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 space-y-1">
-                  <div class="flex justify-between items-center">
-                    <span class="font-bold text-slate-200 font-serif">小陈 (沿海渔港/冷链小贩)</span>
-                    <span class="text-[10px] text-cyan-400 font-mono">净资产 ~50万 (现金流旺)</span>
-                  </div>
-                  <p class="text-slate-400 leading-relaxed">初中毕业去黄沙港跟舅舅出海收鱼，借着沿海高速与冷链物流在水产大棚承包了两个活鲜摊位。皮肤黝黑常年穿防水雨靴，朋友圈天天发第一手东海梭子蟹。</p>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- 深刻哲学题跋 -->
-            <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-center space-y-1">
-              <span class="text-[11px] font-serif text-cyan-400 font-bold">📜 天道昭彰 · 凡心释怀</span>
-              <p class="text-[11px] text-slate-400 font-serif leading-relaxed">
-                “世上安得双全法，换条路只是换一种遗憾。第一世有第一世的挣扎与负重，第二世有第二世的隐痛与代价。看看身旁的发小，时代的列车呼啸向前，唯有接纳实然，立足当下，方得从容心安。”
-              </p>
-            </div>
-
-            <div class="flex justify-center pt-1">
-              <button id="btn-copy-dual-card" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-serif font-bold text-xs shadow-lg flex items-center space-x-2">
-                <span>📋</span>
-                <span>复制双世命运与发小长卷报告</span>
-              </button>
-            </div>
-          </div>
-        `;
-
-        // 绑定复制按钮
-        const copyBtn = document.getElementById('btn-copy-dual-card');
-        if (copyBtn) {
-          copyBtn.onclick = () => {
-            const dualText = `【双世命运对照与同龄发小群像 · 《盐阜潮涌》】\n\n【第一世·实然】${life1.title} (资产${life1.wealth.toFixed(1)}万)\n${life1.epitaph}\n\n【第二世·平行】${rechoiceItem.newTitle} (资产${newWealth.toFixed(1)}万)\n${rechoiceItem.newEpitaph}\n\n【同期发小2026】小李(做题/外包)、小张(汽配小作坊)、小王(县局副科)、小陈(渔港冷链)\n\n-- 逆转分水岭：${rechoiceItem.name}\n世上安得双全法，立足当下方释怀！`;
-            navigator.clipboard.writeText(dualText).then(() => {
-              alert('双世人生与发小对照报告已成功复制到剪贴板！');
-            }).catch(() => {
-              alert('复制成功！');
-            });
-          };
-        }
-
-        // 平滑滚动至双世对照区域
-        dualContainer.scrollIntoView({ behavior: 'smooth' });
+      projectFromNode(){
+        this.projecting=true;let guard=0;
+        try{while(this.state.currentStep<this.state.eventsChain.length){
+          if(++guard>500)throw Error('节点推演未能结束');
+          const ev=this.activeEvent,oldIndex=this.originalTrail.findIndex((t,i)=>i>=this.replayCursor&&t.key===this.eventKey(ev)),old=this.originalTrail[oldIndex];
+          if(oldIndex>=0)this.replayCursor=oldIndex+1;
+          const opts=this.currentOptions.filter(o=>!o.adultLocked&&(!o.req||Object.entries(o.req).every(([k,v])=>(this.state.stats[k]||0)>=v))&&(!o.reqSkill||this.state.life.skill>=o.reqSkill));
+          const original=opts.find(o=>this.optionKey(o)===old?.optionKey);
+          if(ev.topic==='hub'&&!original){const next=AdultLife.yearlyEvent(this.state,ev.year);this.handleOption({adultTopic:next&&next.topic!=='followup'?next.topic:'health'},ev);continue;}
+          const chosen=original||opts.find(o=>o.focus===this.state.life.direction)||opts.find(o=>['recover','couple-boundary','debt-budget','no-child'].includes(o.adultAction))||opts.find(o=>!o.adultTopic);
+          if(!chosen)throw Error('节点推演没有可行选项');this.handleOption(chosen,ev);
+        }}finally{this.projecting=false;}
+        this.replayActive=false;
+        const after=this.state.logs.filter(r=>r.year>=this.replayNode.year),milestones=after.filter(r=>/三年|住院|关系|决定|毕业|入读|大学|进修|疫情|非典|养育|住房|照护/.test(r.text));
+        const candidates=[after[0],...milestones,after.at(-1)].filter(Boolean);this.projectionFrames=candidates.filter((r,i)=>i===0||r.year!==candidates[i-1].year).filter((r,i,arr)=>arr.length<=10||i===0||i===arr.length-1||i%Math.ceil(arr.length/8)===0);
+        this.animateProjection();
+      }
+      animateProjection(){
+        const box=document.getElementById('modal-cinematic'),year=document.getElementById('cinematic-year'),event=document.getElementById('cinematic-text');box.classList.remove('hidden');let i=0;
+        const show=()=>{const f=this.projectionFrames[i++];if(!f){box.classList.add('hidden');this.renderDualLifeComparison();return;}year.innerText=f.year+' 年';event.innerText=f.text;setTimeout(show,900);};show();
+      }
+      renderDualLifeComparison(){
+        const host=document.getElementById('dual-life-container'),old=this.originalLife,now=this.state.firstLifeSnapshot;if(!old||!now)return;
+        host.classList.remove('hidden');document.getElementById('rechoice-container').classList.add('hidden');
+        const year=Math.min(2026,this.replayNode.year+3),a=old.ledger.find(r=>r.year===year),b=now.ledger.find(r=>r.year===year);
+        const stage=a&&b?`${year-this.replayNode.year===3?'三年后':(year-this.replayNode.year)+'年后'}（${year}年）：现金 ${a.close.toFixed(1)}→${b.close.toFixed(1)}万，健康 ${a.health}→${b.health}，关系 ${a.bonds}→${b.bonds}，技能 ${a.skill}→${b.skill}。`:'';
+        host.innerHTML=`<div class="life-panel"><h3>重要节点 · 双世对照</h3><p>${this.replayNode.year}年 · ${this.replayNode.title}</p><p>原选择：${this.replayNode.choice}</p><div class="life-feedback"><b>${stage}</b></div><div class="adult-cards"><div><b>原来的人生</b><p style="white-space:pre-line">${old.epitaph}</p></div><div><b>重选后的人生</b><p style="white-space:pre-line">${now.epitaph}</p></div><div><b>到2026年的变化</b><p>模拟净资产 ${old.wealth.toFixed(1)} → ${now.wealth.toFixed(1)} 万</p><p>后续可行的选择尽量沿用原路。职业、家庭和事件条件变化后，人生会走向新的分支；重选不保证过得更好。</p></div></div></div>`;
       }
 
       openHallOfLives() {
