@@ -12,3 +12,7 @@ tests/integrate_gameplay.py
 deploy-private/
 
 *.旧稿备份.md
+
+# Earlier one-off test runners kept locally
+tests/stress-200.cjs
+tests/experience-yandu-1986.cjs
